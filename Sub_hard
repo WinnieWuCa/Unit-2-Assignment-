@@ -1,0 +1,146 @@
+Sub assignment2_hard()
+
+'-----------------------------------------
+' Start Part 1 - Summary Table
+'-----------------------------------------
+Dim last_row As Long
+Dim ticker As String
+Dim change As Double
+Dim percent As Double
+Dim total As Double
+Dim openprice As Double
+Dim closeprice As Double
+Dim diff As Double
+Dim summary_row As Long
+
+last_row = Cells(Rows.Count, 1).End(xlUp).Row
+total = 0
+change = 0
+percent = 0
+diff = 0
+summary_row = 1
+
+'   ----- create header
+Cells(1, 9).Value = "Ticker"
+Cells(1, 10).Value = "Yearly Change"
+Cells(1, 11).Value = "Percentage Change"
+Cells(1, 12).Value = " Total Stock Volumne "
+'-----------------------------------------
+
+'   ----- loop through to get total volumn by stock
+'1. Show yearly change
+'2. Caculate percent change from the what it opened the year at to what it closed.
+'3. Show the total Volume of the stock
+'4  show ticker symbol
+'5. Use conditional formatting to highlight positive change in green and negative change in red.
+
+openprice = Cells(2, 3).Value
+For last_row = 2 To last_row
+total = total + Cells(last_row, 7).Value
+
+' --- if onto another ticker then write info the summary table
+If Cells(last_row, 1) <> Cells(last_row + 1, 1) Then
+summary_row = summary_row + 1
+ticker = Cells(last_row, 1)
+closeprice = Cells(last_row, 6).Value
+change = (closeprice - openprice)
+If change < 0 Then
+Cells(summary_row, 10).Interior.ColorIndex = 3
+Else
+Cells(summary_row, 10).Interior.ColorIndex = 10
+End If
+'   ---- deal with exception when openprice is zeor (e.g.PLNT ticker)
+If openprice <> 0 Then
+percentage = change / openprice
+Else
+percentage = 0
+End If
+'   ------------------------------
+Cells(summary_row, 9) = ticker
+Cells(summary_row, 10) = change
+Cells(summary_row, 10).NumberFormat = "0.000000000"
+Cells(summary_row, 11).Value = percentage
+Cells(summary_row, 11).NumberFormat = "0.00%"
+Cells(summary_row, 12).Value = total
+total = 0
+change = 0
+openprice = 0
+closeprice = 0
+openprice = Cells(last_row + 1, 3)
+
+End If
+
+Next last_row
+
+'-----------------------------------------
+' Finish Part 1 - Summary Table
+'-----------------------------------------
+
+'-----------------------------------------
+' Start Part 2 - Table of the greatest
+'-----------------------------------------
+
+Dim last_row2 As Integer
+Dim greatest_inc_ticker As String
+Dim greatest_dec_ticker As String
+Dim greatest_volumn_ticker As String
+Dim greatest_inc As Double
+Dim greatest_dec As Double
+Dim greatest_volumn As Double
+
+greatest_inc_ticker = ""
+greatest_dec_ticker = ""
+greatest_volumn_ticker = ""
+greatest_inc = 0
+greatest_dec = 0
+greatest_volumn = 0
+
+last_row2 = Cells(Rows.Count, 9).End(xlUp).Row
+
+'   ----- write header for the table for the greatest -----
+Cells(1, 16).Value = "Ticker"
+Cells(1, 17).Value = "Value"
+Cells(2, 15).Value = "Greatest % Increase"
+Cells(3, 15).Value = "Greatest % Decrease"
+Cells(4, 15).Value = "Greatest Total Volume"
+
+
+For last_row2 = 2 To last_row2
+    
+'   ----- Get Greatest % Increase -----
+If Cells(last_row2, 11) > greatest_inc Then
+greatest_inc_ticker = Cells(last_row2, 9).Value
+greatest_inc = Cells(last_row2, 11).Value
+End If
+
+'   ----- Get Greatest % Decrease -----
+If Cells(last_row2, 11) < greatest_dec Then
+greatest_dec_ticker = Cells(last_row2, 9).Value
+greatest_dec = Cells(last_row2, 11).Value
+End If
+
+'   ----- Get Greatest Value -----
+If Cells(last_row2, 12) > greatest_volumn Then
+greatest_volumn_ticker = Cells(last_row2, 9).Value
+greatest_volumn = Cells(last_row2, 12).Value
+End If
+
+'   ----- Write to Table -----
+Cells(2, 16).Value = greatest_inc_ticker
+Cells(2, 17).Value = greatest_inc
+Cells(2, 17).NumberFormat = "0.00%"
+Cells(3, 16).Value = greatest_dec_ticker
+Cells(3, 17).Value = greatest_dec
+Cells(3, 17).NumberFormat = "0.00%"
+Cells(4, 16).Value = greatest_volumn_ticker
+Cells(4, 17).Value = greatest_volumn
+Cells(4, 17).NumberFormat = "General"
+Next last_row2
+'-----------------------------------------
+' Finish Part 2 - Table of the greatest
+'-----------------------------------------
+MsgBox ("Program is now completed. Please check your results.")
+
+
+End Sub
+
